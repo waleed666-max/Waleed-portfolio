@@ -9,10 +9,10 @@ const CERTS = [
     link: "/Courseracertificate.pdf"
   },
   {
-    title: "Meta Blended IT Training",
+    title: "Web Development — NAVTTC (Prime Minister's IT Training Program)",
     issuer: "NAVTTC",
     date: "Sep – Nov 2025",
-    desc: "Hands-on IT training focused on modern web development and practical project-based learning.",
+    desc: "A government-certified program delivered under the National Vocational & Technical Training Commission (NAVTTC), building strong foundations in web development",
     link: ""
   },
   {
