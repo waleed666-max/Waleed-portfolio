@@ -982,10 +982,13 @@ footer {
   background: rgba(139, 124, 246, 0.18);
   border-color: var(--accent-violet);
 }
-.cert-nav:focus,
-.cert-nav:focus-visible {
+.cert-nav:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(139, 124, 246, 0.35);
+}
+.cert-nav:active {
+  background: rgba(139, 124, 246, 0.4);
+  border-color: var(--accent-violet);
+  box-shadow: 0 0 20px rgba(139, 124, 246, 0.6);
 }
 .cert-nav svg { width: 18px; height: 18px; }
 
@@ -1069,10 +1072,13 @@ footer {
     outline: none;
     -webkit-tap-highlight-color: transparent;
   }
-  .cert-nav-mobile:focus,
-  .cert-nav-mobile:focus-visible {
+  .cert-nav-mobile:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(139, 124, 246, 0.35);
+  }
+  .cert-nav-mobile:active {
+    background: rgba(139, 124, 246, 0.4);
+    border-color: var(--accent-violet);
+    box-shadow: 0 0 20px rgba(139, 124, 246, 0.6);
   }
   .cert-slide.is-active .cert-card {
     box-shadow: 0 0 18px rgba(139, 124, 246, 0.18);
