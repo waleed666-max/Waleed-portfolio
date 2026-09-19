@@ -6,14 +6,14 @@ const CERTS = [
     issuer: "Meta (via Coursera)",
     date: "Nov 2025",
     desc: "Meta's industry-recognized 9-course program covering JavaScript,  React, Version Control, HTML/CSS, Figma and UX/UI Design.",
-    link: "public/Courseracertificate.pdf"
+    link: "/Courseracertificate.pdf"
   },
   {
     title: "Meta Blended IT Training",
     issuer: "NAVTTC",
     date: "Sep – Nov 2025",
     desc: "Hands-on IT training focused on modern web development and practical project-based learning.",
-    link: "papi"
+    link: ""
   },
   {
     title: "Chrome DevTools User",
