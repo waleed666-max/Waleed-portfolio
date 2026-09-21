@@ -15,15 +15,15 @@ export default function Contact() {
     setStatus({ text: "Checking email...", color: "gray" });
 
     try {
-      // Step 1: Check ke email real hai ya fake
+      // Step 1: Check ke email 
       const verifyRes = await fetch(
-        `https://emailvalidation.abstractapi.com/v1/?api_key=2a766f0ae9184874bc5e76356cf45a9f&email=${encodeURIComponent(
+        `https://emailreputation.abstractapi.com/v1/?api_key=204a3f83f40b4e1fa8a97b2fe3af6036&email=${encodeURIComponent(
           form.email
         )}`
       );
       const verifyData = await verifyRes.json();
 
-      if (verifyData.deliverability !== "DELIVERABLE") {
+      if (verifyData.email_deliverability?.status !== "deliverable") {
         setStatus({
           text: "⚠️ This email address doesn't seem to exist. Please double-check and try again.",
           color: "#f28b8b"
@@ -32,7 +32,7 @@ export default function Contact() {
         return;
       }
 
-      // Step 2: Email real hai, ab message bhej dein
+      // Step 2: Email is real or fake
       setStatus({ text: "Sending...", color: "gray" });
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
