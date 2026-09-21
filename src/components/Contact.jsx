@@ -12,9 +12,28 @@ export default function Contact() {
   async function handleSubmit(e) {
     e.preventDefault();
     setSending(true);
-    setStatus({ text: "Sending...", color: "gray" });
+    setStatus({ text: "Checking email...", color: "gray" });
 
     try {
+      // Step 1: Check ke email real hai ya fake
+      const verifyRes = await fetch(
+        `https://emailvalidation.abstractapi.com/v1/?api_key=2a766f0ae9184874bc5e76356cf45a9f&email=${encodeURIComponent(
+          form.email
+        )}`
+      );
+      const verifyData = await verifyRes.json();
+
+      if (verifyData.deliverability !== "DELIVERABLE") {
+        setStatus({
+          text: "⚠️ This email address doesn't seem to exist. Please double-check and try again.",
+          color: "#f28b8b"
+        });
+        setSending(false);
+        return;
+      }
+
+      // Step 2: Email real hai, ab message bhej dein
+      setStatus({ text: "Sending...", color: "gray" });
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
@@ -126,8 +145,6 @@ export default function Contact() {
                 />
               </div>
             </div>
-
-           
 
             <div className="field">
               <label htmlFor="message">Message</label>
