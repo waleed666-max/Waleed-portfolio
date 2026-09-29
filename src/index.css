@@ -144,6 +144,12 @@ a { color: inherit; text-decoration: none; }
     font-size: 1.15rem;
   }
 }
+.nav-links-desktop a.active,
+.nav-links-mobile a.active {
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+  font-weight: 600;
+}
 
 /* ===== Hero ===== */
 .hero {
