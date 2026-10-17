@@ -13,7 +13,7 @@ const CERTS = [
     issuer: "NAVTTC",
     date: "Sep – Nov 2025",
     desc: "A government-certified program delivered under the National Vocational & Technical Training Commission (NAVTTC), building strong foundations in web development",
-    link: ""
+    link: "/NAVTTC_Certificate.pdf"
   },
   {
     title: "Chrome DevTools User",
