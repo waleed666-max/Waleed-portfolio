@@ -12,34 +12,51 @@ export default function Contact() {
 async function handleSubmit(e) {
   e.preventDefault();
   setSending(true);
-  setStatus({ text: "Sending...", color: "gray" });
+  setStatus({ text: "Checking email...", color: "gray" });
 
   try {
-    const res = await fetch("/api/contact", {
+    // Step 1: apni API se email check
+    const checkRes = await fetch("/api/contact", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify({ email: form.email }),
     });
 
-    // JSON safely parse karo
-    let data = null;
+    let check = null;
     try {
-      data = await res.json();
+      check = await checkRes.json();
     } catch {
-      data = null;
+      check = null;
     }
 
-    if (res.ok && data?.success) {
-      setStatus({ text: "Message sent successfully!", color: "#7fdc9a" });
-      setForm({ name: "", email: "", message: "" });
-    } else if (data?.error) {
-      // Server ka asli message (jaise "email doesn't exist")
-      setStatus({ text: "⚠️ " + data.error, color: "#f28b8b" });
-    } else {
+    if (!checkRes.ok || !check?.valid) {
       setStatus({
-        text: "Server not reachable. If you are on localhost, use 'npx vercel dev' or test on the live site.",
+        text: "⚠️ " + (check?.error || "Could not verify email. Please try again."),
         color: "#f28b8b",
       });
+      setSending(false);
+      return;
+    }
+
+    // Step 2: email sahi hai, ab message bhejo
+    setStatus({ text: "Sending...", color: "gray" });
+    const response = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        access_key: "171ee76b-6472-437b-a3e3-f7ff935e1719",
+        name: form.name,
+        email: form.email,
+        message: form.message,
+      }),
+    });
+    const data = await response.json();
+
+    if (data.success) {
+      setStatus({ text: "Message sent successfully!", color: "#7fdc9a" });
+      setForm({ name: "", email: "", message: "" });
+    } else {
+      setStatus({ text: "Error! Please try again.", color: "#f28b8b" });
     }
   } catch {
     setStatus({ text: "Network error. Check your internet and try again.", color: "#f28b8b" });
