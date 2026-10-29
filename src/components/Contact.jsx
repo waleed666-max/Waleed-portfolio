@@ -9,55 +9,44 @@ export default function Contact() {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setSending(true);
-    setStatus({ text: "Checking email...", color: "gray" });
+async function handleSubmit(e) {
+  e.preventDefault();
+  setSending(true);
+  setStatus({ text: "Sending...", color: "gray" });
 
+  try {
+    const res = await fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+
+    // JSON safely parse karo
+    let data = null;
     try {
-      // Step 1: Check ke email 
-      const verifyRes = await fetch(
-        `https://emailreputation.abstractapi.com/v1/?api_key=204a3f83f40b4e1fa8a97b2fe3af6036&email=${encodeURIComponent(
-          form.email
-        )}`
-      );
-      const verifyData = await verifyRes.json();
-
-      if (verifyData.email_deliverability?.status !== "deliverable") {
-        setStatus({
-          text: "⚠️ This email address doesn't seem to exist. Please double-check and try again.",
-          color: "#f28b8b"
-        });
-        setSending(false);
-        return;
-      }
-
-      // Step 2: Email is real or fake
-      setStatus({ text: "Sending...", color: "gray" });
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({
-          access_key: "171ee76b-6472-437b-a3e3-f7ff935e1719",
-          name: form.name,
-          email: form.email,
-          message: form.message
-        })
-      });
-      const data = await response.json();
-
-      if (data.success) {
-        setStatus({ text: "Message sent successfully!", color: "#7fdc9a" });
-        setForm({ name: "", email: "", message: "" });
-      } else {
-        setStatus({ text: "Error! Please try again.", color: "#f28b8b" });
-      }
+      data = await res.json();
     } catch {
-      setStatus({ text: "Error! Please try again.", color: "#f28b8b" });
-    } finally {
-      setSending(false);
+      data = null;
     }
+
+    if (res.ok && data?.success) {
+      setStatus({ text: "Message sent successfully!", color: "#7fdc9a" });
+      setForm({ name: "", email: "", message: "" });
+    } else if (data?.error) {
+      // Server ka asli message (jaise "email doesn't exist")
+      setStatus({ text: "⚠️ " + data.error, color: "#f28b8b" });
+    } else {
+      setStatus({
+        text: "Server not reachable. If you are on localhost, use 'npx vercel dev' or test on the live site.",
+        color: "#f28b8b",
+      });
+    }
+  } catch {
+    setStatus({ text: "Network error. Check your internet and try again.", color: "#f28b8b" });
+  } finally {
+    setSending(false);
   }
+}
 
   return (
     <section className="section" id="contact">
