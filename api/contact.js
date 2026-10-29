@@ -1,11 +1,11 @@
-const dns = require("dns").promises;
+import dns from "node:dns/promises";
 
 const BLOCKED = new Set([
   "mailinator.com", "10minutemail.com", "guerrillamail.com",
   "tempmail.com", "yopmail.com", "trashmail.com", "sharklasers.com",
 ]);
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   try {
     if (req.method !== "POST") {
       return res.status(405).json({ error: "Method not allowed." });
@@ -49,13 +49,18 @@ module.exports = async function handler(req, res) {
       }),
     });
 
-    const data = await r.json();
+    const text = await r.text();
+    let data = null;
+    try { data = JSON.parse(text); } catch {}
 
-    if (data.success) {
+    if (data && data.success) {
       return res.status(200).json({ success: true });
     }
-    return res.status(500).json({ error: "DEBUG Web3Forms: " + (data.message || "unknown error") });
+
+    return res.status(500).json({
+      error: "DEBUG Web3Forms (" + r.status + "): " + (data?.message || text.slice(0, 150)),
+    });
   } catch (err) {
     return res.status(500).json({ error: "DEBUG crash: " + err.message });
   }
-};
+}
