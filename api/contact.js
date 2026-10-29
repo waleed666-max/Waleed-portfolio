@@ -1,11 +1,11 @@
-import dns from "node:dns/promises";
+const dns = require("dns").promises;
 
 const BLOCKED = new Set([
   "mailinator.com", "10minutemail.com", "guerrillamail.com",
   "tempmail.com", "yopmail.com", "trashmail.com", "sharklasers.com",
 ]);
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   try {
     if (req.method !== "POST") {
       return res.status(405).json({ error: "Method not allowed." });
@@ -34,6 +34,10 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "This email doesn't exist. Please enter your real email." });
     }
 
+    if (!process.env.WEB3FORMS_KEY) {
+      return res.status(500).json({ error: "DEBUG: WEB3FORMS_KEY is missing on server." });
+    }
+
     const r = await fetch("https://api.web3forms.com/submit", {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
@@ -44,13 +48,14 @@ export default async function handler(req, res) {
         message,
       }),
     });
+
     const data = await r.json();
 
     if (data.success) {
       return res.status(200).json({ success: true });
     }
-    return res.status(500).json({ error: "Could not send message. Please try again later." });
+    return res.status(500).json({ error: "DEBUG Web3Forms: " + (data.message || "unknown error") });
   } catch (err) {
-    return res.status(500).json({ error: "Server error. Please try again later." });
+    return res.status(500).json({ error: "DEBUG crash: " + err.message });
   }
-}
+};
